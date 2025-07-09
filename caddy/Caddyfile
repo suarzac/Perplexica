@@ -1,0 +1,79 @@
+ai.suarzac.com {
+    encode gzip zstd
+
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+
+    # Reverse proxy for
+    reverse_proxy app_name:3000
+    basic_auth {
+        # Username "admin", password "mypassword"
+        admin $2a$12$KErlMQa1jXmWeMHvJOOJbueDBnDMcql9mQbvzdsMQSNQ7.hJHzjzu
+    }
+
+
+}
+
+
+search.suarzac.com {
+    encode gzip zstd
+
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+
+    # Reverse proxy for
+    reverse_proxy searxng:8080
+    basic_auth {
+        # Username "admin", password "mypassword"
+        admin $2a$12$KErlMQa1jXmWeMHvJOOJbueDBnDMcql9mQbvzdsMQSNQ7.hJHzjzu
+    }
+
+
+}
+
+glances.suarzac.com {
+    encode gzip zstd
+
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+
+    # Reverse proxy for Glances
+    reverse_proxy glances:61208
+}
+
+# stats.suarzac.com {
+#     encode gzip zstd
+
+#     tls {
+#         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+#     }
+
+#     # Reverse proxy for 50080
+#     reverse_proxy host.docker.internal:50080
+#     basic_auth {
+#         # Username "admin", password "mypassword"
+#         admin $2a$12$KErlMQa1jXmWeMHvJOOJbueDBnDMcql9mQbvzdsMQSNQ7.hJHzjzu
+#     }
+
+
+# }
+
+# hedge.suarzac.com {
+#     encode gzip zstd
+
+#     tls {
+#         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+#     }
+
+#     # Reverse proxy for 50080
+#     reverse_proxy localhost:50080
+#     basic_auth {
+#         # Username "admin", password "mypassword"
+#         admin $2a$12$KErlMQa1jXmWeMHvJOOJbueDBnDMcql9mQbvzdsMQSNQ7.hJHzjzu
+#     }
+
+
+# }

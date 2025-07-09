@@ -1,6 +1,7 @@
 services:
   searxng:
     image: docker.io/searxng/searxng:latest
+    container_name: searxng
     volumes:
       - ./searxng:/etc/searxng:rw
     ports:
@@ -11,6 +12,7 @@ services:
 
   app:
     image: itzcrazykns1337/perplexica:main
+    container_name: app_name
     build:
       context: .
       dockerfile: app.dockerfile
@@ -26,6 +28,50 @@ services:
       - uploads:/home/perplexica/uploads
       - ./config.toml:/home/perplexica/config.toml
     restart: unless-stopped
+  
+  caddy:
+    container_name: caddy
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.caddy
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    networks:
+      - perplexica-network
+    environment:
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
+
+  glances:
+    image: nicolargo/glances:latest
+    container_name: glances
+    restart: always
+    privileged: true
+    pid: host
+    network_mode: "host"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/os-release:/etc/os-release:ro
+    environment:
+      - GLANCES_OPT=-w
+      - GLANCES_THEME=Perplexica
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    ports:
+      - "61208:61208" # Web UI
+      - "61209:61209" # API
 
 networks:
   perplexica-network:
